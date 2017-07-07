@@ -8,7 +8,7 @@ user_agent = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebK
                             "Chrome/59.0.3071.104 Safari/537.36"}
 MAX_RESPONSE_TIMEOUT = 7
 devman_api = "https://devman.org/api/challenges/solution_attempts/"
-SEC_IN_HOUR = 3600
+SECS_IN_HOUR = 3600
 LATE_HOUR = 4
 
 
@@ -52,7 +52,7 @@ def get_midnighters(all_records: "list") -> "list":
         timezone = pytz.timezone(record['timezone'])
         timestamp = record['timestamp']
         time = pytz.utc.localize(datetime.datetime.utcfromtimestamp(timestamp)).astimezone(timezone)
-        local_time = time.hour + time.utcoffset().seconds // SEC_IN_HOUR
+        local_time = time.hour + (time.utcoffset().seconds // SECS_IN_HOUR)
         if 0 < local_time < LATE_HOUR:
             midnighters.append(record['username'])
     return midnighters
