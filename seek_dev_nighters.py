@@ -1,5 +1,5 @@
 import requests
-import datetime
+from datetime import datetime
 import pytz
 import ast
 import logging
@@ -51,7 +51,7 @@ def get_midnighters(all_records: "list") -> "list":
     for record in all_records:
         timezone = pytz.timezone(record['timezone'])
         timestamp = record['timestamp']
-        time = pytz.utc.localize(datetime.datetime.utcfromtimestamp(timestamp)).astimezone(timezone)
+        time = pytz.utc.localize(datetime.utcfromtimestamp(timestamp)).astimezone(timezone)
         local_time = time.hour + (time.utcoffset().seconds // SECS_IN_HOUR)
         if 0 < local_time < LATE_HOUR:
             midnighters.append(record['username'])
