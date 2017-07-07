@@ -11,6 +11,7 @@ devman_api = "https://devman.org/api/challenges/solution_attempts/"
 SEC_IN_HOUR = 3600
 LATE_HOUR = 4
 
+
 def get_response_from_devman_api(page=1) -> "str":
     params = dict(page=page)
     try:
@@ -45,7 +46,7 @@ def load_all_records(pages_amount: "int") -> "list":
     return all_records
 
 
-def get_midnighters(all_records: "list"):
+def get_midnighters(all_records: "list") -> "list":
     midnighters = list()
     for record in all_records:
         timezone = pytz.timezone(record['timezone'])
@@ -69,7 +70,6 @@ def main():
 
 
 if __name__ == '__main__':
-
     logger = logging.getLogger()
     formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
     logger.setLevel(logging.ERROR)
