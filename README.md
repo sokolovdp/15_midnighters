@@ -5,7 +5,7 @@ seek_dev_nighters.py is checking who uploaded homeworks to devman between 0am an
 # Sample usage
 
 ```text
-loaded 296 valid records from 10 pages
+loaded 296 valid records
 midnighthers are:
    id322343244
    id139044419
