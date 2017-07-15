@@ -14,23 +14,21 @@ LATE_HOUR = 4
 def get_response_from_devman_api(page=1) -> "dict":
     try:
         response = requests.get(DEVMAN_API_URL, params=dict(page=page), headers=USER_AGENT, timeout=MAX_TIMEOUT)
-    except requests.exceptions.Timeout:
-        logger.error("devman api response timeout=", MAX_TIMEOUT)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as rer:
+        logger.error("devman api error, exception={}".format(rer))
     else:
-        if response.ok:
-            return response.json()
-        else:
-            logger.error("davman api response error=", response.status_code)
+        return response.json()
 
 
 def load_all_records() -> "list":
     all_records = list()
-    page = get_response_from_devman_api()
+    page = get_response_from_devman_api(page=1)
     pages_amount = page['number_of_pages']
-    all_records.extend([*page['records']])
+    all_records.extend(page['records'])
     for n in range(1, pages_amount):
         page = get_response_from_devman_api(page=n + 1)
-        all_records.extend([*page['records']])
+        all_records.extend(page['records'])
     return all_records
 
 
@@ -41,7 +39,7 @@ def find_midnighters(all_records: "list") -> "list":
         timestamp = record['timestamp']
         time = pytz.utc.localize(datetime.utcfromtimestamp(timestamp)).astimezone(timezone)
         local_user_time = time.hour + (time.utcoffset().seconds // SECS_IN_HOUR)
-        if 0 < local_user_time < LATE_HOUR:
+        if local_user_time < LATE_HOUR:
             midnighters.append(record['username'])
     return midnighters
 
@@ -56,7 +54,7 @@ def main():
 
 def create_logger() -> "class 'logging.RootLogger'":
     new_logger = logging.getLogger()
-    formatter = logging.Formatter('%(asctime)s %(name)-6s %(levelname)-5s %(message)s')
+    formatter = logging.Formatter('%(asctime)s %(name)-4s %(levelname)-5s %(message)s')
     new_logger.setLevel(logging.ERROR)
     ch = logging.StreamHandler()
     ch.setLevel(logging.ERROR)
